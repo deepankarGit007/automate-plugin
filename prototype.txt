@@ -1,0 +1,40 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import time
+
+# Your login credentials
+username = "KRISHNA" 
+password = "Krishna@7588"
+
+# Setup Selenium WebDriver
+options = webdriver.ChromeOptions()
+options.add_argument("--start-maximized")
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+# Step 1: Open the login page
+driver.get("https://partner.indinet.co.in/reseller/Login.aspx")
+time.sleep(3)
+
+# Step 2: Enter username & password
+driver.find_element(By.ID, "txtUserName").send_keys(username)
+driver.find_element(By.ID, "txtPassword").send_keys(password)
+
+# Step 3: Click login button
+driver.find_element(By.ID, "save").click()
+time.sleep(10)
+
+# Step 4: Navigate to the dashboard or target page
+# (You may need to inspect the page to find the link or table you want to scrape)
+# Example: Scraping Balance info after login
+try:
+    balance_element = driver.find_element(By.XPATH, '//span[@id="lblBalance"]')
+    print("Current Balance:", balance_element.text)
+except:
+    print("Could not find balance element. Check the XPATH.")
+
+# Step 5: Close browser
+driver.quit()
+
