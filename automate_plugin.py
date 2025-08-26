@@ -49,7 +49,7 @@ try:
 
     # Step 5: Click on Search button
     driver.find_element(By.ID, "ContentPlaceHolder1_btnserch").click()
-    time.sleep(10)
+    time.sleep(5)
 
     # Step 6: Click on Print button
     driver.find_element(By.ID, "ContentPlaceHolder1_ButtonSearchPrint").click()
@@ -60,7 +60,6 @@ try:
         driver.switch_to.window(driver.window_handles[-1])
         print("Switched to Print window")
 
-    #  CHANGE STARTS HERE
     # Step 6.2: Debug all iframes
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
     print("Found iframes:", len(iframes))
@@ -79,6 +78,36 @@ try:
             )
             export_btn.click()
             print(" Export to Excel clicked inside iframe", i)
+
+            time.sleep(5)
+
+            # 🔹 Step 6.4: Handle reason textarea + submit
+            try:
+                reason_box = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.TAG_NAME, "TEXTAREA"))
+                )
+                reason_box.send_keys("Testing reason")
+                print(" Filled reason textarea")
+                time.sleep(2)
+                # Click Submit
+                submit_btn = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.ID, "ucDownLoadVerification_btnSubmitreason"))
+                )
+                submit_btn.click()
+                print(" Submit clicked")
+                time.sleep(2)
+                # Click Export again
+                export_btn2 = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.XPATH, "//input[contains(@value,'Export To Excel')]"))
+                )
+                export_btn2.click()
+                print(" Export to Excel clicked again")
+
+                time.sleep(2)
+
+            except Exception as e:
+                print(" No textarea/submit appeared:", e)
+
             found = True
             break
         except:
@@ -87,27 +116,22 @@ try:
     if not found:
         print(" Export button not found in any iframe!")
 
+        time.sleep(2)
+
     driver.switch_to.default_content()  # exit iframe
-    #  CHANGE ENDS HERE
 
     # Step 7: Misc. task (Cancel dialog)
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_btnCancelD")))
     driver.find_element(By.ID, "ContentPlaceHolder1_btnCancelD").click()
-    time.sleep(10)
+    time.sleep(2)
 
     # Step 8: Logout
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "lbklogout")))
     driver.find_element(By.ID, "lbklogout").click()
-    time.sleep(10)
+    time.sleep(2)
 
 except Exception as e:
     print("Error:", e)
 
 finally:
     driver.quit()
-    print("==========================")
-    print("Automation Successfull....")
-    print("==========================")
-
-
-
